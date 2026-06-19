@@ -5,7 +5,7 @@ import { useUserStore } from '@/store/useUserStore';
 import { useBookingStore } from '@/store/useBookingStore';
 import { getRoomById } from '@/data/rooms';
 import { mockEquipments } from '@/data/equipments';
-import { formatDate, getDayOfWeek, formatDuration } from '@/utils/timeUtils';
+import { formatDate, getDayOfWeek, formatDuration, timeToMinutes } from '@/utils/timeUtils';
 import { calculateFee, getRateColor } from '@/utils/feeCalculator';
 import { Equipment, EquipmentRental } from '@/types';
 import Tag from '@/components/Tag';
@@ -164,9 +164,10 @@ const BookingConfirmPage: React.FC = () => {
               {formatDate(selectedDate)} {getDayOfWeek(selectedDate)}
               {' · '}
               <Text className={styles.highlight}>
-                {formatDuration(
-                  (parseInt(selectedEndTime?.split(':')[0] || '0') - parseInt(selectedStartTime?.split(':')[0] || '0')) * 60
-                )}
+                {selectedStartTime && selectedEndTime
+                  ? formatDuration(timeToMinutes(selectedEndTime) - timeToMinutes(selectedStartTime))
+                  : '请选择时段'
+                }
               </Text>
             </Text>
           </View>

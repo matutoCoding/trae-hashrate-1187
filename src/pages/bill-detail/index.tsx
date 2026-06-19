@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { View, Text, Button, ScrollView } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import { useBookingStore } from '@/store/useBookingStore';
-import { formatDate, getDayOfWeek } from '@/utils/timeUtils';
+import { formatDate, getDayOfWeek, timeToMinutes } from '@/utils/timeUtils';
 import { getRateColor, formatDuration } from '@/utils/feeCalculator';
 import classnames from 'classnames';
 import styles from './index.module.scss';
@@ -11,10 +11,15 @@ const BillDetailPage: React.FC = () => {
   const router = useRouter();
   const bookingId = router.params.bookingId || '';
 
-  const { getBillByBookingId, getBookingById, payBill } = useBookingStore();
+  const { bills, bookings, payBill, startTimeoutChecker, processTimeout } = useBookingStore();
 
-  const bill = getBillByBookingId(bookingId);
-  const booking = getBookingById(bookingId);
+  useEffect(() => {
+    startTimeoutChecker();
+    processTimeout();
+  }, [startTimeoutChecker, processTimeout]);
+
+  const bill = useMemo(() => bills.find(b => b.bookingId === bookingId), [bills, bookingId]);
+  const booking = useMemo(() => bookings.find(b => b.id === bookingId), [bookings, bookingId]);
 
   const handlePay = () => {
     if (!bill) return;
@@ -121,9 +126,7 @@ const BillDetailPage: React.FC = () => {
           <View className={styles.infoRow}>
             <Text className={styles.infoLabel}>时长</Text>
             <Text className={styles.infoValue}>
-              {formatDuration(
-                (parseInt(booking.endTime.split(':')[0]) - parseInt(booking.startTime.split(':')[0])) * 60
-              )}
+              {formatDuration(timeToMinutes(booking.endTime) - timeToMinutes(booking.startTime))}
             </Text>
           </View>
         </View>

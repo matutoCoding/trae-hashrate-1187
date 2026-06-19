@@ -21,20 +21,21 @@ const statusTextMap: Record<WaitlistStatus, string> = {
 
 const WaitlistPage: React.FC = () => {
   const { userInfo } = useUserStore();
-  const { getWaitlistByUser, cancelWaitlist, confirmWaitlist, declineWaitlist, startTimeoutChecker, stopTimeoutChecker } = useBookingStore();
+  const { waitlist, cancelWaitlist, confirmWaitlist, declineWaitlist, startTimeoutChecker, stopTimeoutChecker, processTimeout } = useBookingStore();
   const [activeTab, setActiveTab] = useState<TabType>('waiting');
 
   useEffect(() => {
     startTimeoutChecker();
+    processTimeout();
     return () => {
       stopTimeoutChecker();
     };
-  }, [startTimeoutChecker, stopTimeoutChecker]);
+  }, [startTimeoutChecker, stopTimeoutChecker, processTimeout]);
 
   const myWaitlist = useMemo(() => {
     if (!userInfo) return [];
-    return getWaitlistByUser(userInfo.id);
-  }, [userInfo, getWaitlistByUser]);
+    return waitlist.filter(w => w.userId === userInfo.id);
+  }, [userInfo, waitlist]);
 
   const waitingList = useMemo(() => {
     return myWaitlist.filter(w => w.status === 'waiting' || w.status === 'notified');

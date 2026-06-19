@@ -2,10 +2,10 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, ScrollView, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useBookingStore } from '@/store/useBookingStore';
-import { mockRooms, getAvailableRooms } from '@/data/rooms';
+import { getAvailableRooms } from '@/data/rooms';
 import { generateDateList, getDayOfWeek, formatDate, timeToMinutes, minutesToTime } from '@/utils/timeUtils';
 import { getRateTypeByTime, getRatePrice, calculateFee, formatDuration } from '@/utils/feeCalculator';
-import Tag from '@/components/Tag';
+import { BookingStatus } from '@/types';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 
@@ -17,34 +17,52 @@ interface TimeSlotData {
   price: number;
 }
 
+const OCCUPIED_STATUSES: BookingStatus[] = ['pending', 'confirmed', 'in_use'];
+
 const SchedulePage: React.FC = () => {
-  const { setSelectedRoom, setSelectedDate, setSelectedTime, selectedStartTime, selectedEndTime, selectedDate, selectedRoomId } = useBookingStore();
+  const { setSelectedRoom, setSelectedDate, setSelectedTime, bookings, startTimeoutChecker, processTimeout } = useBookingStore();
   
   const rooms = getAvailableRooms();
   const dateList = generateDateList(14);
   
   const [currentRoomId, setCurrentRoomId] = useState<string>(rooms[0]?.id || '');
   const [currentDate, setCurrentDate] = useState<string>(dateList[0]);
-  const [slots, setSlots] = useState<TimeSlotData[]>([]);
   const [selectedStart, setSelectedStart] = useState<string | null>(null);
   const [selectedEnd, setSelectedEnd] = useState<string | null>(null);
   const [selecting, setSelecting] = useState<'start' | 'end'>('start');
 
   useEffect(() => {
-    console.log('[SchedulePage] 生成时段数据');
+    startTimeoutChecker();
+    processTimeout();
+  }, [startTimeoutChecker, processTimeout]);
+
+  const currentRoomBookings = useMemo(() => {
+    return bookings.filter(
+      b => b.roomId === currentRoomId
+        && b.date === currentDate
+        && OCCUPIED_STATUSES.includes(b.status)
+    );
+  }, [bookings, currentRoomId, currentDate]);
+
+  const slots = useMemo(() => {
     const generatedSlots: TimeSlotData[] = [];
     const startHour = 9;
     const endHour = 24;
-    const interval = 60;
 
     for (let hour = startHour; hour < endHour; hour++) {
       const startTime = `${hour.toString().padStart(2, '0')}:00`;
       const endTime = `${(hour + 1).toString().padStart(2, '0')}:00`;
       const rateType = getRateTypeByTime(startTime);
       const price = getRatePrice(rateType);
+
+      const slotStartMin = timeToMinutes(startTime);
+      const slotEndMin = timeToMinutes(endTime);
       
-      const bookedChance = hour >= 19 && hour < 22 ? 0.6 : 0.3;
-      const isBooked = Math.random() < bookedChance;
+      const isBooked = currentRoomBookings.some(booking => {
+        const bookingStartMin = timeToMinutes(booking.startTime);
+        const bookingEndMin = timeToMinutes(booking.endTime);
+        return slotStartMin < bookingEndMin && slotEndMin > bookingStartMin;
+      });
 
       generatedSlots.push({
         startTime,
@@ -55,8 +73,8 @@ const SchedulePage: React.FC = () => {
       });
     }
 
-    setSlots(generatedSlots);
-  }, [currentRoomId, currentDate]);
+    return generatedSlots;
+  }, [currentRoomId, currentDate, currentRoomBookings]);
 
   useEffect(() => {
     setSelectedRoom(currentRoomId);
@@ -242,6 +260,9 @@ const SchedulePage: React.FC = () => {
                 {slot.rateType === 'peak' && slot.status === 'available' && (
                   <View className={`${styles.slotTag} ${styles.peak}`}>峰</View>
                 )}
+                {slot.status === 'booked' && (
+                  <View className={styles.slotBookedTag}>已满</View>
+                )}
               </View>
             );
           })}
@@ -260,7 +281,7 @@ const SchedulePage: React.FC = () => {
               </Text>
               <View className={styles.selectedPrice}>
                 <Text className={styles.priceSymbol}>¥</Text>
-                <Text className={styles.priceValue}>{totalFee}</Text>
+                <Text className={styles.priceValue}>{totalFee.toFixed(2)}</Text>
               </View>
             </>
           ) : (

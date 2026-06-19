@@ -7,11 +7,16 @@ import styles from './index.module.scss';
 
 const MinePage: React.FC = () => {
   const { userInfo } = useUserStore();
-  const { getBookingsByUser, getWaitlistByUser, getBillsByUser } = useBookingStore();
+  const { bookings, waitlist, bills, startTimeoutChecker, processTimeout } = useBookingStore();
 
-  const myBookings = userInfo ? getBookingsByUser(userInfo.id) : [];
-  const myWaitlist = userInfo ? getWaitlistByUser(userInfo.id) : [];
-  const myBills = userInfo ? getBillsByUser(userInfo.id) : [];
+  React.useEffect(() => {
+    startTimeoutChecker();
+    processTimeout();
+  }, [startTimeoutChecker, processTimeout]);
+
+  const myBookings = userInfo ? bookings.filter(b => b.userId === userInfo.id) : [];
+  const myWaitlist = userInfo ? waitlist.filter(w => w.userId === userInfo.id) : [];
+  const myBills = userInfo ? bills.filter(b => b.userId === userInfo.id) : [];
 
   const pendingBookings = myBookings.filter(b => b.status === 'confirmed').length;
   const completedBookings = myBookings.filter(b => b.status === 'completed').length;

@@ -213,6 +213,19 @@
   }
 }
 
+.slotBookedTag {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+  font-weight: $font-weight-medium;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 4rpx 16rpx;
+  border-radius: $radius-sm;
+}
+
 .bottomBar {
   position: fixed;
   bottom: 0;
