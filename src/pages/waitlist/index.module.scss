@@ -202,3 +202,45 @@
   color: $color-text-secondary;
   line-height: 1.6;
 }
+
+.addBtn {
+  @include button-reset;
+  width: 100%;
+  height: $button-height-md;
+  border-radius: $radius-button;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
+
+.notifyTip {
+  margin-top: $spacing-sm;
+  padding: $spacing-sm $spacing-md;
+  background-color: $color-primary-bg;
+  border-radius: $radius-md;
+}
+
+.notifyTipText {
+  font-size: $font-size-sm;
+  color: $color-primary;
+  font-weight: $font-weight-medium;
+}
+
+.positionBadge {
+  &.notified {
+    background: linear-gradient(135deg, #FF7D00 0%, #FF9A3D 100%);
+  }
+
+  &.confirmed {
+    background: linear-gradient(135deg, #00B42A 0%, #36CFC9 100%);
+  }
+
+  &.cancelled, &.expired {
+    background: $color-text-tertiary;
+  }
+}

@@ -11,6 +11,22 @@
   padding: $spacing-xl $page-padding;
   text-align: center;
   color: $color-text-white;
+
+  &.pending {
+    background: linear-gradient(135deg, #FF7D00 0%, #FF9A3D 100%);
+  }
+
+  &.paid {
+    background: linear-gradient(135deg, #00B42A 0%, #36CFC9 100%);
+  }
+
+  &.cancelled {
+    background: linear-gradient(135deg, #86909C 0%, #C9CDD4 100%);
+  }
+
+  &.refunded {
+    background: linear-gradient(135deg, #86909C 0%, #C9CDD4 100%);
+  }
 }
 
 .statusTitle {
@@ -68,6 +84,10 @@
   &.paid {
     background-color: $color-bg-hover;
     color: $color-text-tertiary;
+  }
+
+  &.cancelled {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   }
 }
 

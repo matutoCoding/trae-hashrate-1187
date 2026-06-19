@@ -13,7 +13,7 @@ const MinePage: React.FC = () => {
   const myWaitlist = userInfo ? getWaitlistByUser(userInfo.id) : [];
   const myBills = userInfo ? getBillsByUser(userInfo.id) : [];
 
-  const pendingBookings = myBookings.filter(b => b.status === 'pending' || b.status === 'confirmed').length;
+  const pendingBookings = myBookings.filter(b => b.status === 'confirmed').length;
   const completedBookings = myBookings.filter(b => b.status === 'completed').length;
   const waitingWaitlist = myWaitlist.filter(w => w.status === 'waiting' || w.status === 'notified').length;
   const pendingBills = myBills.filter(b => b.status === 'pending').length;

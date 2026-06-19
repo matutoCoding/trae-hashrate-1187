@@ -1,45 +1,67 @@
 import React, { useMemo } from 'react';
-import { View, Text, Image, Button, ScrollView } from '@tarojs/components';
+import { View, Text, Button, ScrollView } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
-import { getBillByBookingId } from '@/data/bills';
-import { getBookingById } from '@/data/bookings';
-import { formatDate, getDayOfWeek, formatDuration } from '@/utils/timeUtils';
-import { getRateColor, formatDuration as formatDur } from '@/utils/feeCalculator';
+import { useBookingStore } from '@/store/useBookingStore';
+import { formatDate, getDayOfWeek } from '@/utils/timeUtils';
+import { getRateColor, formatDuration } from '@/utils/feeCalculator';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 
 const BillDetailPage: React.FC = () => {
   const router = useRouter();
   const bookingId = router.params.bookingId || '';
-  
+
+  const { getBillByBookingId, getBookingById, payBill } = useBookingStore();
+
   const bill = getBillByBookingId(bookingId);
   const booking = getBookingById(bookingId);
 
   const handlePay = () => {
-    Taro.showToast({ title: '支付成功', icon: 'success' });
-    console.log('[BillDetail] 支付账单:', bill?.id);
+    if (!bill) return;
+
+    Taro.showModal({
+      title: '确认支付',
+      content: `确认支付 ¥${bill.totalAmount.toFixed(2)} 吗？`,
+      success: (res) => {
+        if (res.confirm) {
+          payBill(bill.id);
+          Taro.showToast({ title: '支付成功', icon: 'success' });
+          console.log('[BillDetail] 支付账单:', bill.id);
+        }
+      }
+    });
   };
 
-  if (!bill || !booking) {
-    return (
-      <View className={styles.page}>
-        <View style={{ padding: 100, textAlign: 'center' }}>
-          <Text>账单信息不存在</Text>
-        </View>
-      </View>
-    );
-  }
+  const handleBackToMine = () => {
+    Taro.switchTab({ url: '/pages/mine/index' });
+  };
 
   const statusText = {
     pending: '待支付',
     paid: '已支付',
     refunded: '已退款',
     cancelled: '已取消'
-  }[bill.status] || '未知';
+  }[bill?.status || 'pending'] || '未知';
+
+  if (!bill || !booking) {
+    return (
+      <View className={styles.page}>
+        <View style={{ padding: 100, textAlign: 'center' }}>
+          <Text>账单信息不存在</Text>
+          <Button
+            style={{ marginTop: 32, width: 200 }}
+            onClick={handleBackToMine}
+          >
+            返回我的
+          </Button>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <ScrollView className={styles.page} scrollY>
-      <View className={styles.statusBanner}>
+      <View className={classnames(styles.statusBanner, styles[bill.status])}>
         <Text className={styles.statusTitle}>{statusText}</Text>
         <Text className={styles.statusDesc}>
           {bill.status === 'pending' && '请在15分钟内完成支付'}
@@ -63,6 +85,14 @@ const BillDetailPage: React.FC = () => {
         {bill.status === 'paid' && (
           <Button className={`${styles.amountBtn} ${styles.paid}`} disabled>
             已支付
+          </Button>
+        )}
+        {bill.status === 'cancelled' && (
+          <Button
+            className={`${styles.amountBtn} ${styles.cancelled}`}
+            onClick={handleBackToMine}
+          >
+            返回我的
           </Button>
         )}
       </View>
@@ -91,7 +121,7 @@ const BillDetailPage: React.FC = () => {
           <View className={styles.infoRow}>
             <Text className={styles.infoLabel}>时长</Text>
             <Text className={styles.infoValue}>
-              {formatDur(
+              {formatDuration(
                 (parseInt(booking.endTime.split(':')[0]) - parseInt(booking.startTime.split(':')[0])) * 60
               )}
             </Text>
@@ -115,7 +145,7 @@ const BillDetailPage: React.FC = () => {
                   <View>
                     <Text className={styles.feeName}>{item.rateName}</Text>
                     <View className={styles.feeDuration}>
-                      {item.startTime} - {item.endTime} · {formatDur(item.duration)}
+                      {item.startTime} - {item.endTime} · {formatDuration(item.duration)}
                     </View>
                   </View>
                 </View>
@@ -142,7 +172,7 @@ const BillDetailPage: React.FC = () => {
                 <View className={styles.equipmentInfo}>
                   <Text className={styles.equipmentName}>{item.equipmentName}</Text>
                   <Text className={styles.equipmentQty}>
-                    ×{item.quantity}  ¥{item.unitPrice}/{/* unit */}次
+                    ×{item.quantity}  ¥{item.unitPrice}/次
                   </Text>
                 </View>
                 <Text className={styles.equipmentPrice}>¥{item.totalPrice.toFixed(2)}</Text>
@@ -182,6 +212,14 @@ const BillDetailPage: React.FC = () => {
           )}
         </View>
       </View>
+
+      {bill.status === 'pending' && (
+        <View style={{ margin: '32rpx', textAlign: 'center' }}>
+          <Text style={{ fontSize: '24rpx', color: '#86909C' }}>
+            超时未支付订单将自动取消
+          </Text>
+        </View>
+      )}
     </ScrollView>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, ScrollView, Button } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useUserStore } from '@/store/useUserStore';
@@ -21,8 +21,15 @@ const statusTextMap: Record<WaitlistStatus, string> = {
 
 const WaitlistPage: React.FC = () => {
   const { userInfo } = useUserStore();
-  const { getWaitlistByUser, cancelWaitlist } = useBookingStore();
+  const { getWaitlistByUser, cancelWaitlist, confirmWaitlist, declineWaitlist, startTimeoutChecker, stopTimeoutChecker } = useBookingStore();
   const [activeTab, setActiveTab] = useState<TabType>('waiting');
+
+  useEffect(() => {
+    startTimeoutChecker();
+    return () => {
+      stopTimeoutChecker();
+    };
+  }, [startTimeoutChecker, stopTimeoutChecker]);
 
   const myWaitlist = useMemo(() => {
     if (!userInfo) return [];
@@ -54,19 +61,58 @@ const WaitlistPage: React.FC = () => {
   };
 
   const handleConfirm = (id: string) => {
-    Taro.showToast({ title: '补位确认成功', icon: 'success' });
-    console.log('[WaitlistPage] 确认补位:', id);
+    Taro.showModal({
+      title: '确认补位',
+      content: '确认补位后将生成预约订单，请在15分钟内完成支付。是否确认？',
+      success: (res) => {
+        if (res.confirm) {
+          const result = confirmWaitlist(id);
+          if (result) {
+            Taro.showToast({ title: '补位确认成功', icon: 'success' });
+            console.log('[WaitlistPage] 确认补位:', id, '生成预约:', result.booking.id);
+
+            setTimeout(() => {
+              Taro.redirectTo({
+                url: `/pages/bill-detail/index?bookingId=${result.booking.id}`
+              });
+            }, 1500);
+          } else {
+            Taro.showToast({ title: '操作失败，请重试', icon: 'none' });
+          }
+        }
+      }
+    });
+  };
+
+  const handleDecline = (id: string) => {
+    Taro.showModal({
+      title: '放弃补位',
+      content: '放弃后名额将顺延给下一位候补用户。确定放弃吗？',
+      success: (res) => {
+        if (res.confirm) {
+          declineWaitlist(id);
+          Taro.showToast({ title: '已放弃补位', icon: 'success' });
+          console.log('[WaitlistPage] 放弃补位:', id);
+        }
+      }
+    });
   };
 
   const goToSchedule = () => {
     Taro.switchTab({ url: '/pages/schedule/index' });
   };
 
+  const goToRegister = () => {
+    Taro.navigateTo({ url: '/pages/waitlist-register/index' });
+  };
+
   const renderCard = (item: any) => (
     <View key={item.id} className={styles.card}>
       <View className={styles.cardHeader}>
         <Text className={styles.roomName}>{item.roomName}</Text>
-        <View className={styles.positionBadge}>#{item.position}</View>
+        <View className={classnames(styles.positionBadge, styles[item.status])}>
+          {item.status === 'waiting' ? `#${item.position}` : statusTextMap[item.status]}
+        </View>
       </View>
       <View className={styles.cardBody}>
         <View className={styles.timeRow}>
@@ -79,6 +125,13 @@ const WaitlistPage: React.FC = () => {
           <Text className={styles.timeLabel}>时段</Text>
           <Text className={styles.timeValue}>{item.startTime} - {item.endTime}</Text>
         </View>
+        {item.status === 'notified' && (
+          <View className={styles.notifyTip}>
+            <Text className={styles.notifyTipText}>
+              📢 请在15分钟内确认，超时名额将顺延
+            </Text>
+          </View>
+        )}
       </View>
       <View className={styles.cardFooter}>
         <Text className={classnames(styles.statusText, styles[item.status])}>
@@ -97,7 +150,7 @@ const WaitlistPage: React.FC = () => {
             <>
               <Button
                 className={`${styles.actionBtn} ${styles.secondary}`}
-                onClick={() => handleCancel(item.id)}
+                onClick={() => handleDecline(item.id)}
               >
                 放弃
               </Button>
@@ -108,6 +161,14 @@ const WaitlistPage: React.FC = () => {
                 确认补位
               </Button>
             </>
+          )}
+          {item.status === 'confirmed' && (
+            <Button
+              className={`${styles.actionBtn} ${styles.primary}`}
+              onClick={() => Taro.switchTab({ url: '/pages/mine/index' })}
+            >
+              查看订单
+            </Button>
           )}
         </View>
       </View>
@@ -136,12 +197,23 @@ const WaitlistPage: React.FC = () => {
       </View>
 
       {activeTab === 'waiting' && (
-        <View className={styles.notice}>
-          <Text className={styles.noticeTitle}>候补规则</Text>
-          <Text className={styles.noticeContent}>
-            当有人取消预约或超时未到，系统会按候补顺序自动通知补位。请保持消息畅通，收到通知后15分钟内确认，否则名额顺延。
-          </Text>
-        </View>
+        <>
+          <View className={styles.notice}>
+            <Text className={styles.noticeTitle}>候补规则</Text>
+            <Text className={styles.noticeContent}>
+              当有人取消预约或超时未到，系统会按候补顺序自动通知补位。请保持消息畅通，收到通知后15分钟内确认，否则名额顺延。
+            </Text>
+          </View>
+
+          <View style={{ margin: '0 32rpx 24rpx' }}>
+            <Button
+              className={styles.addBtn}
+              onClick={goToRegister}
+            >
+              + 新增候补
+            </Button>
+          </View>
+        </>
       )}
 
       <View className={styles.list}>

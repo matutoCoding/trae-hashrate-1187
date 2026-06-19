@@ -12,11 +12,6 @@ import Tag from '@/components/Tag';
 import classnames from 'classnames';
 import styles from './index.module.scss';
 
-interface EquipmentSelection {
-  equipmentId: string;
-  quantity: number;
-}
-
 const BookingConfirmPage: React.FC = () => {
   const router = useRouter();
   const { userInfo } = useUserStore();
@@ -26,10 +21,12 @@ const BookingConfirmPage: React.FC = () => {
     selectedEndTime,
     createBooking,
     addEquipment,
+    updateEquipmentQuantity,
     removeEquipment,
     selectedEquipments,
     calculateTotalFee,
-    getFeeBreakdown
+    getFeeBreakdown,
+    clearSelection
   } = useBookingStore();
 
   const roomId = router.params.roomId || '';
@@ -41,25 +38,21 @@ const BookingConfirmPage: React.FC = () => {
 
   useEffect(() => {
     console.log('[BookingConfirm] 页面加载，房间ID:', roomId);
-  }, [roomId]);
+    return () => {
+      clearSelection();
+    };
+  }, [roomId, clearSelection]);
 
   const totalFee = useMemo(() => {
     const equipmentTotal = selectedEquipments.reduce((sum, e) => sum + e.totalPrice, 0);
-    return Number((baseFee + equipmentTotal).toFixed(2));
-  }, [baseFee, selectedEquipments]);
+    const roomTotal = feeBreakdown.reduce((sum, f) => sum + f.amount, 0);
+    return Number((roomTotal + equipmentTotal).toFixed(2));
+  }, [feeBreakdown, selectedEquipments]);
 
   const handleQuantityChange = (equipment: Equipment, delta: number) => {
     setEquipmentQuantities(prev => {
       const current = prev[equipment.id] || 0;
       const newValue = Math.max(0, Math.min(equipment.available, current + delta));
-      
-      const rental: EquipmentRental = {
-        equipmentId: equipment.id,
-        equipmentName: equipment.name,
-        quantity: newValue,
-        unitPrice: equipment.price,
-        totalPrice: newValue * equipment.price
-      };
 
       if (newValue === 0) {
         removeEquipment(equipment.id);
@@ -67,9 +60,16 @@ const BookingConfirmPage: React.FC = () => {
         return rest;
       } else {
         if (current === 0) {
+          const rental: EquipmentRental = {
+            equipmentId: equipment.id,
+            equipmentName: equipment.name,
+            quantity: newValue,
+            unitPrice: equipment.price,
+            totalPrice: newValue * equipment.price
+          };
           addEquipment(rental);
         } else {
-          addEquipment(rental);
+          updateEquipmentQuantity(equipment.id, newValue);
         }
         return { ...prev, [equipment.id]: newValue };
       }
@@ -87,15 +87,21 @@ const BookingConfirmPage: React.FC = () => {
       return;
     }
 
+    const equipmentTotal = selectedEquipments.reduce((sum, e) => sum + e.totalPrice, 0);
+    const roomTotal = feeBreakdown.reduce((sum, f) => sum + f.amount, 0);
+    const finalTotal = Number((roomTotal + equipmentTotal).toFixed(2));
+
     console.log('[BookingConfirm] 提交预约', {
       roomId,
       startTime: selectedStartTime,
       endTime: selectedEndTime,
-      totalFee,
+      totalFee: finalTotal,
       equipments: selectedEquipments
     });
 
-    const booking = createBooking(room.id, room.name, userInfo.id, userInfo.name);
+    const { booking, bill } = createBooking(room.id, room.name, userInfo.id, userInfo.name);
+    
+    console.log('[BookingConfirm] 预约创建成功:', booking.id, '账单:', bill.id);
     
     Taro.showToast({ title: '预约成功', icon: 'success' });
     
@@ -174,7 +180,7 @@ const BookingConfirmPage: React.FC = () => {
         <View className={styles.sectionBody}>
           <View className={styles.feeTotal}>
             <Text className={styles.feeSymbol}>¥</Text>
-            <Text className={styles.feeValue}>{baseFee.toFixed(2)}</Text>
+            <Text className={styles.feeValue}>{feeBreakdown.reduce((sum, f) => sum + f.amount, 0).toFixed(2)}</Text>
           </View>
           <View className={styles.feeBreakdown}>
             {feeBreakdown.map((item, index) => (
@@ -249,11 +255,26 @@ const BookingConfirmPage: React.FC = () => {
                       ¥{eq.price}
                     </Text>
                     <Text className={styles.equipmentUnit}>/{eq.unit}</Text>
+                    {qty > 0 && (
+                      <Text style={{ display: 'block', fontSize: '24rpx', color: '#7B61FF', marginTop: '8rpx' }}>
+                        小计 ¥{(qty * eq.price).toFixed(2)}
+                      </Text>
+                    )}
                   </View>
                 </View>
               );
             })}
           </View>
+          {selectedEquipments.length > 0 && (
+            <View style={{ marginTop: '24rpx', paddingTop: '24rpx', borderTop: '1rpx solid #F2F3F5' }}>
+              <Text style={{ fontSize: '26rpx', color: '#86909C' }}>
+                设备租借合计：
+                <Text style={{ color: '#7B61FF', fontWeight: '600' }}>
+                  ¥{selectedEquipments.reduce((sum, e) => sum + e.totalPrice, 0).toFixed(2)}
+                </Text>
+              </Text>
+            </View>
+          )}
         </View>
       </View>
 
