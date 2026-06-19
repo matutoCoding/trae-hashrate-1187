@@ -1,0 +1,361 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 200rpx;
+}
+
+.section {
+  margin: $spacing-md $page-padding;
+  background-color: $color-bg-card;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
+  overflow: hidden;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 2rpx solid $color-divider;
+}
+
+.sectionTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.sectionBody {
+  padding: $spacing-lg;
+}
+
+.roomInfo {
+  display: flex;
+  align-items: center;
+}
+
+.roomImage {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: $radius-md;
+  background-color: $color-bg-hover;
+  margin-right: $spacing-md;
+  flex-shrink: 0;
+}
+
+.roomText {
+  flex: 1;
+}
+
+.roomName {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.roomDesc {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  @include text-ellipsis;
+}
+
+.timeInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.timeItem {
+  flex: 1;
+  text-align: center;
+}
+
+.timeLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-xs;
+}
+
+.timeValue {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $color-text-primary;
+}
+
+.timeDivider {
+  width: 80rpx;
+  height: 4rpx;
+  background: linear-gradient(90deg, transparent, $color-primary, transparent);
+  margin: 0 $spacing-sm;
+  margin-bottom: -$spacing-lg;
+}
+
+.duration {
+  text-align: center;
+  margin-top: $spacing-sm;
+}
+
+.durationText {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+
+  .highlight {
+    color: $color-primary;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.feeSection {
+  background: linear-gradient(135deg, $color-primary-bg 0%, #fff 100%);
+}
+
+.feeTotal {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  margin-bottom: $spacing-md;
+}
+
+.feeSymbol {
+  font-size: $font-size-lg;
+  color: $color-price;
+  font-weight: $font-weight-medium;
+}
+
+.feeValue {
+  font-size: 64rpx;
+  font-weight: $font-weight-bold;
+  color: $color-price;
+  line-height: 1;
+}
+
+.feeBreakdown {
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+  padding: $spacing-md;
+}
+
+.breakdownItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $spacing-sm 0;
+  border-bottom: 2rpx dashed $color-divider;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.breakdownLeft {
+  display: flex;
+  align-items: center;
+}
+
+.breakdownTag {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  margin-right: $spacing-sm;
+
+  &.peak { background-color: $color-peak; }
+  &.offpeak { background-color: $color-offpeak; }
+  &.night { background-color: $color-night; }
+}
+
+.breakdownName {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.breakdownTime {
+  font-size: 22rpx;
+  color: $color-text-tertiary;
+  margin-left: $spacing-xs;
+}
+
+.breakdownRight {
+  display: flex;
+  align-items: center;
+}
+
+.breakdownPrice {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.equipmentList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.equipmentItem {
+  display: flex;
+  align-items: center;
+  padding: $spacing-sm;
+  border-radius: $radius-md;
+  background-color: $color-bg-hover;
+  transition: all $transition-fast;
+
+  &.selected {
+    background-color: $color-primary-bg;
+    border: 2rpx solid $color-primary;
+  }
+}
+
+.equipmentImage {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-sm;
+  background-color: $color-bg-card;
+  margin-right: $spacing-md;
+  flex-shrink: 0;
+}
+
+.equipmentInfo {
+  flex: 1;
+}
+
+.equipmentName {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  margin-bottom: 4rpx;
+}
+
+.equipmentDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.equipmentPrice {
+  font-size: $font-size-md;
+  color: $color-price;
+  font-weight: $font-weight-semibold;
+}
+
+.equipmentUnit {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  font-weight: normal;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}
+
+.quantityBtn {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: $radius-sm;
+  background-color: $color-bg-card;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-lg;
+  color: $color-text-secondary;
+  transition: all $transition-fast;
+
+  &:active {
+    background-color: $color-primary-bg;
+    color: $color-primary;
+  }
+}
+
+.quantityNum {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+  min-width: 48rpx;
+  text-align: center;
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: $color-bg-card;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+}
+
+.totalInfo {
+  flex: 1;
+}
+
+.totalLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+  margin-bottom: 4rpx;
+}
+
+.totalPrice {
+  .symbol {
+    font-size: $font-size-md;
+    color: $color-price;
+    font-weight: $font-weight-medium;
+  }
+  .value {
+    font-size: $font-size-xxl;
+    color: $color-price;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.submitBtn {
+  @include button-reset;
+  width: 280rpx;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+
+  &.disabled {
+    background: $color-border;
+    color: $color-text-tertiary;
+  }
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background-color: rgba(255, 125, 0, 0.05);
+  border-radius: $radius-md;
+  margin: 0 $page-padding $spacing-md;
+}
+
+.noticeIcon {
+  font-size: $font-size-lg;
+  flex-shrink: 0;
+}
+
+.noticeText {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: 1.6;
+  flex: 1;
+}

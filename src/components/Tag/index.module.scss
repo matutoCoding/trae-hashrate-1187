@@ -1,0 +1,65 @@
+@use '@/styles/variables.scss' as *;
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-xs;
+  padding: 0 $spacing-sm;
+  white-space: nowrap;
+
+  &.sm {
+    height: 36rpx;
+  }
+
+  &.md {
+    height: 48rpx;
+    padding: 0 $spacing-md;
+  }
+}
+
+.text {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+}
+
+.default {
+  background-color: $color-bg-hover;
+  .text { color: $color-text-secondary; }
+}
+
+.primary {
+  background-color: $color-primary-bg;
+  .text { color: $color-primary; }
+}
+
+.success {
+  background-color: rgba(0, 180, 42, 0.1);
+  .text { color: $color-success; }
+}
+
+.warning {
+  background-color: rgba(255, 125, 0, 0.1);
+  .text { color: $color-warning; }
+}
+
+.error {
+  background-color: rgba(245, 63, 63, 0.1);
+  .text { color: $color-error; }
+}
+
+.peak {
+  background-color: $color-peak-bg;
+  .text { color: $color-peak; }
+}
+
+.offpeak {
+  background-color: $color-offpeak-bg;
+  .text { color: $color-offpeak; }
+}
+
+.night {
+  background-color: $color-night-bg;
+  .text { color: $color-night; }
+}

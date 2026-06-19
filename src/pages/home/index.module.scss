@@ -1,0 +1,217 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+}
+
+.header {
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  padding: $spacing-xl $page-padding $spacing-lg;
+  border-radius: 0 0 $radius-xl $radius-xl;
+}
+
+.greeting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+}
+
+.greetingText {
+  .hello {
+    font-size: $font-size-xxl;
+    font-weight: $font-weight-bold;
+    color: $color-text-white;
+    display: block;
+    margin-bottom: 4rpx;
+  }
+
+  .sub {
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: $radius-round;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2rpx solid rgba(255, 255, 255, 0.5);
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: $radius-button;
+  padding: 0 $spacing-lg;
+  height: 80rpx;
+  backdrop-filter: blur(10px);
+}
+
+.searchIcon {
+  font-size: $font-size-lg;
+  color: rgba(255, 255, 255, 0.9);
+  margin-right: $spacing-sm;
+}
+
+.searchInput {
+  flex: 1;
+  font-size: $font-size-md;
+  color: $color-text-white;
+  background: transparent;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.section {
+  padding: $spacing-md $page-padding 0;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.sectionMore {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.quickActions {
+  display: flex;
+  gap: $spacing-md;
+  margin-bottom: $spacing-sm;
+}
+
+.quickCard {
+  flex: 1;
+  background-color: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-md;
+  box-shadow: $shadow-card;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+.quickIcon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  margin-bottom: $spacing-sm;
+
+  &.primary {
+    background-color: $color-primary-bg;
+    color: $color-primary;
+  }
+
+  &.warning {
+    background-color: $color-peak-bg;
+    color: $color-peak;
+  }
+}
+
+.quickText {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.quickDesc {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.rateSection {
+  margin-top: $spacing-md;
+}
+
+.rateCard {
+  background: linear-gradient(135deg, $color-primary-bg 0%, #fff 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-md;
+}
+
+.rateTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.rateList {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.rateItem {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-sm 0;
+  background-color: $color-bg-card;
+  border-radius: $radius-md;
+}
+
+.rateName {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  margin-bottom: 4rpx;
+}
+
+.ratePrice {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+
+  &.peak { color: $color-peak; }
+  &.offpeak { color: $color-offpeak; }
+  &.night { color: $color-night; }
+}
+
+.rateTime {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.roomList {
+  padding-bottom: $spacing-xl;
+}
+
+.empty {
+  padding: 120rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.emptyText {
+  font-size: $font-size-md;
+  color: $color-text-tertiary;
+  margin-top: $spacing-md;
+}

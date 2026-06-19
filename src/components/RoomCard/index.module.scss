@@ -1,0 +1,129 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: $color-bg-card;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  box-shadow: $shadow-card;
+  margin-bottom: $spacing-md;
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &.disabled {
+    opacity: 0.6;
+  }
+}
+
+.image {
+  width: 100%;
+  height: 300rpx;
+  background-color: $color-bg-hover;
+}
+
+.content {
+  padding: $spacing-lg;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-sm;
+}
+
+.name {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  @include text-ellipsis;
+  flex: 1;
+  margin-right: $spacing-sm;
+}
+
+.description {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  margin-bottom: $spacing-md;
+  @include text-ellipsis;
+}
+
+.info {
+  display: flex;
+  gap: $spacing-xl;
+  margin-bottom: $spacing-md;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.infoLabel {
+  font-size: $font-size-sm;
+  color: $color-text-tertiary;
+}
+
+.infoValue {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.equipments {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $spacing-xs;
+  flex: 1;
+  margin-right: $spacing-md;
+}
+
+.equipmentTag {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  background-color: $color-bg-hover;
+  padding: 4rpx $spacing-sm;
+  border-radius: $radius-xs;
+  white-space: nowrap;
+}
+
+.equipmentMore {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.price {
+  display: flex;
+  align-items: baseline;
+  flex-shrink: 0;
+}
+
+.priceSymbol {
+  font-size: $font-size-sm;
+  color: $color-price;
+  font-weight: $font-weight-medium;
+}
+
+.priceValue {
+  font-size: $font-size-xl;
+  color: $color-price;
+  font-weight: $font-weight-bold;
+  line-height: 1;
+}
+
+.priceUnit {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-left: 4rpx;
+}

@@ -1,0 +1,297 @@
+@use '@/styles/variables.scss' as *;
+
+.page {
+  min-height: 100vh;
+  background-color: $color-bg-page;
+  padding-bottom: 200rpx;
+}
+
+.roomSelector {
+  background-color: $color-bg-card;
+  padding: $spacing-md $page-padding;
+  box-shadow: $shadow-card;
+}
+
+.roomTabs {
+  display: flex;
+  gap: $spacing-sm;
+  overflow-x: auto;
+  white-space: nowrap;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.roomTab {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-sm $spacing-md;
+  background-color: $color-bg-hover;
+  border-radius: $radius-button;
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  white-space: nowrap;
+  transition: all $transition-fast;
+
+  &.active {
+    background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+    color: $color-text-white;
+    font-weight: $font-weight-medium;
+  }
+
+  &:active {
+    opacity: 0.8;
+  }
+}
+
+.dateSelector {
+  display: flex;
+  align-items: center;
+  background-color: $color-bg-card;
+  margin-top: $spacing-sm;
+  padding: $spacing-md 0;
+  padding-left: $page-padding;
+}
+
+.dateScroll {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.dateItem {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100rpx;
+  padding: $spacing-sm 0;
+  margin-right: $spacing-sm;
+  border-radius: $radius-md;
+  transition: all $transition-fast;
+
+  &.active {
+    background-color: $color-primary-bg;
+  }
+
+  &.today .dateDay {
+    color: $color-primary;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.dateWeek {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: 4rpx;
+}
+
+.dateDay {
+  font-size: $font-size-lg;
+  color: $color-text-primary;
+  font-weight: $font-weight-semibold;
+}
+
+.dateMonth {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-lg;
+  padding: $spacing-md $page-padding;
+  background-color: $color-bg-card;
+  margin-top: $spacing-sm;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.legendDot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 4rpx;
+
+  &.available { background-color: $color-offpeak; }
+  &.booked { background-color: $color-border; }
+  &.selected { background-color: $color-primary; }
+  &.peak { background-color: $color-peak; }
+}
+
+.legendText {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+}
+
+.timeSlots {
+  padding: $spacing-md $page-padding;
+}
+
+.sectionTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: $spacing-md;
+}
+
+.slotGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+}
+
+.slotItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100rpx;
+  border-radius: $radius-md;
+  background-color: $color-bg-card;
+  border: 2rpx solid $color-border;
+  transition: all $transition-fast;
+  position: relative;
+
+  &.available {
+    border-color: $color-border;
+    &:active {
+      border-color: $color-primary;
+      background-color: $color-primary-bg;
+    }
+  }
+
+  &.booked {
+    background-color: $color-bg-hover;
+    border-color: $color-bg-hover;
+    opacity: 0.6;
+  }
+
+  &.selected {
+    background-color: $color-primary-bg;
+    border-color: $color-primary;
+  }
+
+  &.peak .slotTime {
+    color: $color-peak;
+  }
+
+  &.selected .slotTime {
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+}
+
+.slotTime {
+  font-size: $font-size-sm;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.slotPrice {
+  font-size: 20rpx;
+  color: $color-text-tertiary;
+  margin-top: 4rpx;
+}
+
+.slotTag {
+  position: absolute;
+  top: -2rpx;
+  right: -2rpx;
+  font-size: 18rpx;
+  padding: 2rpx 8rpx;
+  border-radius: 0 $radius-md 0 $radius-xs;
+
+  &.peak {
+    background-color: $color-peak;
+    color: $color-text-white;
+  }
+}
+
+.bottomBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: $color-bg-card;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.08);
+  padding: $spacing-md $page-padding;
+  padding-bottom: calc($spacing-md + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100;
+}
+
+.selectedInfo {
+  flex: 1;
+}
+
+.selectedLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: 4rpx;
+}
+
+.selectedTime {
+  font-size: $font-size-md;
+  color: $color-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+.selectedPrice {
+  margin-top: 4rpx;
+  .priceSymbol {
+    font-size: $font-size-sm;
+    color: $color-price;
+    font-weight: $font-weight-medium;
+  }
+  .priceValue {
+    font-size: $font-size-xl;
+    color: $color-price;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.bookButton {
+  @include button-reset;
+  width: 240rpx;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+  color: $color-text-white;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+  }
+
+  &.disabled {
+    background: $color-border;
+    color: $color-text-tertiary;
+  }
+}
+
+.waitlistButton {
+  @include button-reset;
+  width: 240rpx;
+  height: $button-height-lg;
+  border-radius: $radius-button;
+  background-color: $color-peak-bg;
+  color: $color-peak;
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  transition: all $transition-base;
+
+  &:active {
+    opacity: 0.9;
+  }
+}
