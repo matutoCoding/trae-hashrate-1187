@@ -11,7 +11,7 @@ const BillDetailPage: React.FC = () => {
   const router = useRouter();
   const bookingId = router.params.bookingId || '';
 
-  const { bills, bookings, payBill, startTimeoutChecker, processTimeout } = useBookingStore();
+  const { bills, bookings, payBill, cancelBooking, startTimeoutChecker, processTimeout } = useBookingStore();
 
   useEffect(() => {
     startTimeoutChecker();
@@ -32,6 +32,26 @@ const BillDetailPage: React.FC = () => {
           payBill(bill.id);
           Taro.showToast({ title: '支付成功', icon: 'success' });
           console.log('[BillDetail] 支付账单:', bill.id);
+        }
+      }
+    });
+  };
+
+  const handleCancel = () => {
+    if (!bill) return;
+
+    Taro.showModal({
+      title: '取消订单',
+      content: '确定要取消该订单吗？取消后名额将释放给候补用户。',
+      success: (res) => {
+        if (res.confirm) {
+          cancelBooking(bill.bookingId);
+          Taro.showToast({ title: '订单已取消', icon: 'success' });
+          console.log('[BillDetail] 取消订单:', bill.bookingId);
+
+          setTimeout(() => {
+            Taro.switchTab({ url: '/pages/schedule/index' });
+          }, 1500);
         }
       }
     });
@@ -83,9 +103,14 @@ const BillDetailPage: React.FC = () => {
           {bill.totalAmount.toFixed(2)}
         </View>
         {bill.status === 'pending' && (
-          <Button className={styles.amountBtn} onClick={handlePay}>
-            立即支付
-          </Button>
+          <>
+            <Button className={styles.amountBtn} onClick={handlePay}>
+              立即支付
+            </Button>
+            <Button className={`${styles.amountBtn} ${styles.cancelBtn}`} onClick={handleCancel}>
+              取消订单
+            </Button>
+          </>
         )}
         {bill.status === 'paid' && (
           <Button className={`${styles.amountBtn} ${styles.paid}`} disabled>

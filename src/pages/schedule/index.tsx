@@ -161,6 +161,7 @@ const SchedulePage: React.FC = () => {
       Taro.showToast({ title: '请选择时段', icon: 'none' });
       return;
     }
+    setSelectedRoom(currentRoomId);
     setSelectedTime(selectedStart, selectedEnd);
     Taro.navigateTo({
       url: `/pages/booking-confirm/index?roomId=${currentRoomId}`

@@ -89,6 +89,13 @@
   &.cancelled {
     background: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
   }
+
+  &.cancelBtn {
+    background: $color-bg-card;
+    color: $color-text-secondary;
+    border: 2rpx solid $color-border;
+    margin-top: $spacing-sm;
+  }
 }
 
 .section {

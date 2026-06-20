@@ -19,6 +19,7 @@ const BookingConfirmPage: React.FC = () => {
     selectedDate,
     selectedStartTime,
     selectedEndTime,
+    selectedRoomId,
     createBooking,
     addEquipment,
     updateEquipmentQuantity,
@@ -29,19 +30,22 @@ const BookingConfirmPage: React.FC = () => {
     clearSelection
   } = useBookingStore();
 
-  const roomId = router.params.roomId || '';
+  const roomId = router.params.roomId || selectedRoomId || '';
   const room = getRoomById(roomId);
   const feeBreakdown = getFeeBreakdown();
   const baseFee = calculateTotalFee();
 
   const [equipmentQuantities, setEquipmentQuantities] = useState<Record<string, number>>({});
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     console.log('[BookingConfirm] 页面加载，房间ID:', roomId);
     return () => {
-      clearSelection();
+      if (!submitted) {
+        clearSelection();
+      }
     };
-  }, [roomId, clearSelection]);
+  }, [roomId, clearSelection, submitted]);
 
   const totalFee = useMemo(() => {
     const equipmentTotal = selectedEquipments.reduce((sum, e) => sum + e.totalPrice, 0);
@@ -99,6 +103,7 @@ const BookingConfirmPage: React.FC = () => {
       equipments: selectedEquipments
     });
 
+    setSubmitted(true);
     const { booking, bill } = createBooking(room.id, room.name, userInfo.id, userInfo.name);
     
     console.log('[BookingConfirm] 预约创建成功:', booking.id, '账单:', bill.id);
@@ -106,6 +111,7 @@ const BookingConfirmPage: React.FC = () => {
     Taro.showToast({ title: '预约成功', icon: 'success' });
     
     setTimeout(() => {
+      clearSelection();
       Taro.redirectTo({
         url: `/pages/bill-detail/index?bookingId=${booking.id}`
       });
